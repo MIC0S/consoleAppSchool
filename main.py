@@ -1,47 +1,23 @@
 import os
 from database import Database
+import functions as f
 
 db = Database()
 
-def execute(command, arguments):
+
+def execute(command, args):
     if command == 'shutdown':
-        print('Program killed')
-        return -1
+        return f.shutdown()
     if command == 'echo':
-        print('echod: ', end='')
-        print(*arguments[1:])
-        return 0
+        return f.echo(args)
     if command == 'cls':
-        os.system('cls' if os.name == 'nt' else 'clear')
-        print('Screen cleared')
-        return 0
+        return f.cls()
     if command == 'help':
-        print(f"""List of avaliable commands:
-shutdown                 - shuts down the program
-echo [text]              - repeats all arguments back
-cls                      - clears console
-help                     - gives this list
-repeat [amount] [text]   - repeats [text] given [amount] of times
-adduser [name] [pwd]     - creates new user with [name] and [pwd] password""")
-        return 0
+        return f.helpExt()
     if command == 'repeat':
-        try:
-            amount = int(arguments[1])
-            text = " ".join(arguments[2:])
-            print(amount*text)
-        except:
-            print('Invalid args given!')
-        return 0
+        return f.repeat(args)
     if command == 'adduser':
-        if len(arguments) == 3:
-            status = db.createUser(arguments[1], arguments[2])
-            if status == -1:
-                print('Username claimed')
-            else:
-                print('User added successfully!')
-        else:
-            print('wrong arguments!')
-        return 0
+        return f.adduser(args)
 
 
 def auth():
@@ -51,7 +27,7 @@ def auth():
         password = input('Enter password: ')
 
         if db.authUser(username, password):
-            return True
+            return username
         else:
             used_attempts += 1
             os.system('cls' if os.name == 'nt' else 'clear')
@@ -61,9 +37,6 @@ def auth():
                 print(f'Incorrect Credentials, please try again:\nTotal attempts {used_attempts}/3')
 
 
-
-
-
 def main():
     os.system('cls' if os.name == 'nt' else 'clear')
     authStatus = auth()
@@ -71,8 +44,10 @@ def main():
         print('Auth failed')
         return -1
     os.system('cls' if os.name == 'nt' else 'clear')
-    print('Welcome!')
+    print(f'Welcome, dear {authStatus}')
+
     while True:
+        print(authStatus, end="> ")
         command_list = input().split()
         command = None
         if len(command_list) > 0:

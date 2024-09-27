@@ -1,7 +1,9 @@
-import os
-import psycopg2
-import psycopg2.pool
 import hashlib
+import os
+
+import psycopg2
+import psycopg2.errors
+import psycopg2.pool
 
 
 class Database:
@@ -29,7 +31,7 @@ class Database:
             cursor = conn.cursor()
             cursor.execute(f'INSERT INTO users (username, password) VALUES(%s, %s);', (username, password_hashed))
             conn.commit()
-        except:
+        except psycopg2.errors.UniqueViolation:
             status = -1
         finally:
             self.connection_pool.putconn(conn)
