@@ -60,7 +60,6 @@ class MyWindow(QMainWindow):
 
     def displayStatus(self, text, time_to_display):
         self.statusBar.showMessage(text, time_to_display * 1000)
-        QTimer.singleShot(time_to_display * 1000, lambda: self.statusBar.clearMessage())
 
 
 def main():
